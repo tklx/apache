@@ -1,0 +1,20 @@
+# !include frombase
+# !include tini
+
+ARG NEED_USER='www-data'
+ARG NEED_HOME='/var/www'
+
+# !include security
+
+# App-specific config
+RUN set -x \
+    && apt-get update \
+    && apt-get -y --no-install-recommends install apache2 \
+    && apt-clean --aggressive \
+    && mkdir -p /var/lock/apache2
+
+COPY apache2-fg /
+
+EXPOSE 80 443
+ENTRYPOINT ["/tini", "--"]
+CMD ["/apache2-fg"]
